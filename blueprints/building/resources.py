@@ -23,16 +23,6 @@ class BuildingResources(Resource):
         buildings = []
         for building in qry_building:
             marshal_building = marshal(building, Building.response_fields)
-
-            qry_image = Images.query.filter_by(building_id = marshal_building['id']).filter_by(deleted=False)
-
-            other_images = []
-            for image in qry_image:
-                marshal_image = marshal(image, Images.response_fields)
-                other_images.append(marshal_image['image'])
-
-
-            marshal_building['other_images'] = other_images
             buildings.append(marshal_building)
 
         return buildings, 200
@@ -58,6 +48,26 @@ class BuildingResources(Resource):
         app.logger.debug('DEBUG : %s', building)
 
         return marshal(building, Building.response_fields), 200
+
+    def options(self):
+        return {}, 200
+
+class BuildingResourcesId(Resource):
+    def get(self, id): 
+
+        qry_building = Building.query.get(id)
+        qry_image = Images.query.filter_by(building_id = qry_building.id).filter_by(deleted=False)
+
+        marshal_building = marshal(qry_building, Building.response_fields)
+
+        other_images = []
+        for image in qry_image:
+            marshal_image = marshal(image, Images.response_fields)
+            other_images.append(marshal_image['image'])
+
+        marshal_building['other_images'] = other_images
+
+        return marshal_building, 200
 
     def put(self, id):
         parser = reqparse.RequestParser()
@@ -102,10 +112,9 @@ class BuildingResources(Resource):
         db.session.commit()
 
         return {'message':'edit building success'}, 200
-
+    
     def options(self):
         return {}, 200
-
 class BuildingImageResources(Resource):
 
     def post(self):
@@ -129,14 +138,14 @@ class BuildingImageResources(Resource):
         parser.add_argument('deleted', location = 'json')
         args = parser.parse_args()
 
-        qry_building = Building.query.get(id)
+        qry_image = Images.query.get(id)
 
         if args['building_id'] is not None:
-            qry_building.building_id = args['building_id']
+            qry_image.building_id = args['building_id']
         if args['image'] is not None:
-            qry_building.image = args['image']
+            qry_image.image = args['image']
         if args['deleted'] is not None:
-            qry_building.deleted = True
+            qry_image.deleted = True
 
         db.session.commit()
 
@@ -145,5 +154,6 @@ class BuildingImageResources(Resource):
     def options(self):
         return {}, 200
 
-api.add_resource(BuildingResources,'', '/<int:id>')
-api.add_resource(BuildingImageResources,'/image', '/<int:id>')
+api.add_resource(BuildingResources,'')
+api.add_resource(BuildingResourcesId, '/<int:id>')
+api.add_resource(BuildingImageResources,'/image', '/image/<int:id>')

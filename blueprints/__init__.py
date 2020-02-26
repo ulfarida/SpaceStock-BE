@@ -11,7 +11,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 
 app.config['APP_DEBUG']=True
-
+CORS(app)
 
 # =========================================
 # ================DATABASE=================
