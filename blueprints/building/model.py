@@ -68,27 +68,3 @@ class Images(db.Model):
     def __repr__(self):
         return '<Images %r>' %self.id
 
-# class Facilities(db.Model):
-#     __tablename__ = "Facilities"
-#     id = db.Column(db.Integer, primary_key = True, autoincrement = True)
-#     building_id = db.Column(db.Integer, db.ForeignKey("Building.id"), nullable = False)
-#     facility = db.Column(db.String(255), nullable = False)
-#     image = db.Column(db.String(1000), nullable = False)
-#     deleted = db.Column(db.Boolean, nullable = False, default=False)
-
-#     response_fields = {
-#         'id' : fields.Integer,
-#         'building_id' : fields.Integer,
-#         'facility' : fields.String,
-#         'image': fields.String,
-#         'deleted': fields.Boolean
-#     }
-
-#     def __init__(self, building_id, facility, image):
-#         self.building_id = building_id
-#         self.facility = facility,
-#         self.image = image
-
-#     def __repr__(self):
-#         return '<Facilities %r>' %self.id
-
